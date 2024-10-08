@@ -9,6 +9,7 @@
 
 related video
 https://www.bilibili.com/video/BV1HW4cehEVc
+location: 22:20
 
 # Thansk to
 https://residentevilmodding.boards.net/thread/13450/fbxskel-tool-maxscript
