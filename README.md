@@ -7,5 +7,8 @@
 * your armature name is "root"
 * scale(0.01, 0.01, 0.01), location(0, 0, 0), euler_rotation(90°, 0, 0)
 
+related video
+https://www.bilibili.com/video/BV1HW4cehEVc
+
 # Thansk to
 https://residentevilmodding.boards.net/thread/13450/fbxskel-tool-maxscript
