@@ -176,7 +176,6 @@ class FBXSkelFile():
             
             rot = [rotation[3], rotation[0], rotation[1], rotation[2]]
             pos = [translation[0] , translation[1] , translation[2] ]
-            
             # amt新建骨骼
             bone = amt.data.edit_bones.new("b")
             bone.length = 0.1
@@ -246,22 +245,22 @@ class FBXSkelFile():
 
         # 打印boneInfos
         # 写入excel
-        with open("D:\\blendert\\boneInfos.txt", "w") as f:
-            for i in range(self.boneCount):
-                # print(boneInfos[i]["name"])
-                # 写入文件
+        # with open("D:\\blendert\\boneInfos.txt", "w") as f:
+        #     for i in range(self.boneCount):
+        #         # print(boneInfos[i]["name"])
+        #         # 写入文件
 
-                # print(boneInfos[i]["name"],
-                #     "\t",boneInfos[i]["hash"].hex(),
-                #     "\t",self.indices[i],
-                #     "\t",boneInfos[i]["parent"],
-                #     #   "\t",boneInfos[i]["translation"],
-                #     #   "\t",boneInfos[i]["rotation"],
-                #     #   "\t",boneInfos[i]["scale"]
-                #     )
+        #         # print(boneInfos[i]["name"],
+        #         #     "\t",boneInfos[i]["hash"].hex(),
+        #         #     "\t",self.indices[i],
+        #         #     "\t",boneInfos[i]["parent"],
+        #         #     #   "\t",boneInfos[i]["translation"],
+        #         #     #   "\t",boneInfos[i]["rotation"],
+        #         #     #   "\t",boneInfos[i]["scale"]
+        #         #     )
                 
-                row = boneInfos[i]["name"] + "\t" + boneInfos[i]["hash"].hex() + "\t" + str(self.indices[i]) + "\t" + str(boneInfos[i]["parent"]) + "\n"
-                f.write(row)
+        #         row = boneInfos[i]["name"] + "\t" + boneInfos[i]["hash"].hex() + "\t" + str(self.indices[i]) + "\t" + str(boneInfos[i]["parent"]) + "\n"
+        #         f.write(row)
             
 
 
