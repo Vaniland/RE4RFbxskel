@@ -189,10 +189,10 @@ class ExportFbxskel(bpy.types.Operator, ExportHelper):
             self.report({'ERROR'}, "Armature名称必须以root开头")
             return {'CANCELLED'}
         
-        # 保证amt的缩放为0.01,欧拉旋转x为90度，否则报错
-        if not amt.scale == mathutils.Vector((0.01, 0.01, 0.01)) and not amt.rotation_euler[0] == math.pi / 2:
-            self.report({'ERROR'}, "Armature缩放必须为0.01，旋转x为90度")
-            return {'CANCELLED'}
+        # # 保证amt的缩放为0.01,欧拉旋转x为90度，否则报错
+        # if not amt.scale == mathutils.Vector((0.01, 0.01, 0.01)) and not amt.rotation_euler[0] == math.pi / 2:
+        #     self.report({'ERROR'}, "Armature缩放必须为0.01，旋转x为90度")
+        #     return {'CANCELLED'}
 
         amt_copy = amt.copy()
         amt_copy.data = amt.data.copy()
@@ -210,6 +210,14 @@ class ExportFbxskel(bpy.types.Operator, ExportHelper):
         bpy.ops.object.select_all(action='DESELECT')
         amt_copy.select_set(True)
         bpy.context.view_layer.objects.active = amt_copy
+
+        # 计算一个绕x轴旋转-90度和缩放100倍的矩阵
+        # 旋转矩阵
+        rotMat = mathutils.Matrix.Rotation(-math.pi / 2, 4, 'X')
+        scaleMat = mathutils.Matrix.Scale(100, 4)
+        transMat = scaleMat @ rotMat
+
+        print(amt_copy.matrix_world)
 
         bpy.ops.object.mode_set(mode='POSE')
         bpy.ops.pose.armature_apply()
@@ -280,7 +288,10 @@ class ExportFbxskel(bpy.types.Operator, ExportHelper):
                 
                 namesArr.append(subBoneName)
                 
-                boneLocalMat = amt_copy.data.edit_bones[i - 1].matrix
+                boneLocalMat = transMat @ amt_copy.matrix_world @ amt_copy.data.edit_bones[i - 1].matrix
+                boneLocalMat.normalize()
+                # print((amt_copy.matrix_world @ amt_copy.data.edit_bones[i - 1].matrix).to_translation())
+                # boneLocalMat =  amt_copy.data.edit_bones[i - 1].matrix
                 # 有父骨骼的
                 if amt_copy.data.edit_bones[i - 1].parent is not None:
                     # parentBoneName = amt_copy.data.bones[i].parent.name
@@ -288,8 +299,11 @@ class ExportFbxskel(bpy.types.Operator, ExportHelper):
                     # if len(ps) > 1:
                         # parentBoneName = ps[1]
                     parentBoneID = namesArrWithBoneNumbers.index(amt_copy.data.edit_bones[i - 1].parent.name)
-                    pMat = amt_copy.data.edit_bones[i - 1].parent.matrix
+                    pMat = transMat @ amt_copy.matrix_world @ amt_copy.data.edit_bones[i - 1].parent.matrix
+                    pMat.normalize()
+                    # pMat = amt_copy.data.edit_bones[i - 1].parent.matrix 
                     boneLocalMat = pMat.inverted() @ boneLocalMat
+                    # print(boneLocalMat.to_translation())
 
                 # blender里面设置root
                 if amt_copy.data.edit_bones[i - 1].parent is None:
@@ -353,14 +367,14 @@ class ExportFbxskel(bpy.types.Operator, ExportHelper):
                     writer.writeFloat(rot_quaternion.z)
                     writer.writeFloat(rot_quaternion.w)
                         
-                # writer.writeFloat(boneLocalMat.scale.x)
-                # writer.writeFloat(boneLocalMat.scale.y)
+                # writer.writeFloat(scale.x / 100)
+                # writer.writeFloat(scale.y / 100)
                 writer.writeFloat(1)
                 writer.writeFloat(1)
                 if version == 5:
                     writer.writeFloat(0)
                 else:
-                    # writer.writeFloat(boneLocalMat.scale.z)
+                    writer.writeFloat(scale.z)
                     writer.writeFloat(1)
                 writer.writeFloat(0)
 
